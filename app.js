@@ -1,4 +1,5 @@
-// Генеалогический граф. Cytoscape.js + dagre + HTML-лейблы на карточках.
+// Генеалогический граф. Cytoscape.js + dagre + HTML-лейблы карточками.
+// Светлая бумажно-бенто тема.
 
 (function () {
   const { people, marriages, lineInfo } = window.__data;
@@ -19,6 +20,7 @@
         dates,
         profession: p.profession || '',
         place: p.place || '',
+        era: p.era || '',
         notes: p.notes || '',
         links: p.links || [],
         line: p.line,
@@ -58,10 +60,10 @@
     });
   });
 
-  // ————— Стили: сами узлы-персоны рендерим через HTML-label, поэтому в стилях — просто прозрачные «контейнеры» правильного размера —————
+  // ————— Стили cytoscape —————
 
-  const personWidth = 250;
-  const personHeight = 96;
+  const personWidth = 260;
+  const personHeight = 104;
 
   const style = [
     {
@@ -79,22 +81,20 @@
       selector: 'node.union',
       style: {
         'shape': 'ellipse',
-        'width': 6,
-        'height': 6,
-        'background-color': '#2a2a33',
+        'width': 4, 'height': 4,
+        'background-color': '#c4b89c',
         'border-width': 0,
       },
     },
-
     {
       selector: 'edge',
       style: {
         'curve-style': 'taxi',
         'taxi-direction': 'downward',
-        'taxi-turn': 40,
-        'taxi-turn-min-distance': 16,
+        'taxi-turn': 45,
+        'taxi-turn-min-distance': 18,
         'width': 1.5,
-        'line-color': '#3a3a46',
+        'line-color': '#c4b89c',
         'target-arrow-shape': 'none',
       },
     },
@@ -102,8 +102,8 @@
       selector: 'edge.e-marriage',
       style: {
         'curve-style': 'straight',
-        'line-color': '#3a3a46',
-        'width': 1.2,
+        'line-color': '#c4b89c',
+        'width': 1.3,
         'line-style': 'solid',
       },
     },
@@ -111,8 +111,8 @@
       selector: 'edge.uncertain',
       style: {
         'line-style': 'dashed',
-        'line-dash-pattern': [5, 5],
-        'line-color': '#2e2e38',
+        'line-dash-pattern': [6, 6],
+        'line-color': '#d9d1bd',
       },
     },
   ];
@@ -125,28 +125,32 @@
     style,
     minZoom: 0.25,
     maxZoom: 2.2,
-    wheelSensitivity: 0.25,
+    wheelSensitivity: 0.3,
+    // Явно включаем пан и зум, чтобы не было сюрпризов на трекпаде
+    panningEnabled: true,
+    userPanningEnabled: true,
+    boxSelectionEnabled: false,
+    autoungrabify: true,
+    autounselectify: false,
     layout: {
       name: 'dagre',
       rankDir: 'TB',
-      nodeSep: 36,
-      rankSep: 110,
-      edgeSep: 12,
+      nodeSep: 44,
+      rankSep: 120,
+      edgeSep: 14,
       ranker: 'tight-tree',
     },
   });
   window.cy = cy;
 
-  // ————— HTML-карточки для узлов-персон —————
+  // ————— HTML-карточки —————
 
   if (cy.nodeHtmlLabel) {
     cy.nodeHtmlLabel([
       {
         query: 'node.person',
-        valign: 'center',
-        halign: 'center',
-        valignBox: 'center',
-        halignBox: 'center',
+        valign: 'center', halign: 'center',
+        valignBox: 'center', halignBox: 'center',
         tpl: (d) => renderCard(d),
       },
     ]);
@@ -177,10 +181,12 @@
   }
 
   cy.ready(() => {
-    cy.fit(null, 60);
+    // Лёгкое начальное позиционирование: вписать всё + немного в сторону, чтобы сайдбар не перекрывал
+    cy.fit(null, 80);
+    cy.panBy({ x: 140, y: 0 });
   });
 
-  // ————— Детальная панель —————
+  // ————— Панель деталей —————
 
   const panel = document.getElementById('panel');
   const panelBody = document.getElementById('panel-body');
@@ -212,9 +218,13 @@
          </div>`
       : '';
 
+    const eraHtml = d.era
+      ? `<div class="panel-era"><strong>Эпоха</strong>${escapeHtml(d.era)}</div>`
+      : '';
+
     panelBody.innerHTML = `
       <div class="panel-line-pill">
-        <span class="dot" style="background:${info.color}; box-shadow: 0 0 8px ${info.color}"></span>
+        <span class="dot" style="background:${info.color}"></span>
         ${escapeHtml(info.label || '')}
       </div>
       <h2>${escapeHtml(d.label)}</h2>
@@ -224,6 +234,7 @@
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
           Данные под вопросом
         </div>`}
+      ${eraHtml}
       ${rows.length ? `<dl>${rows.map(([k, v]) => `<dt>${k}</dt><dd>${escapeHtml(v)}</dd>`).join('')}</dl>` : ''}
       ${notesHtml ? `<div class="panel-notes">${notesHtml}</div>` : ''}
       ${linksHtml}
@@ -233,15 +244,12 @@
 
   function closePanel() {
     panel.classList.remove('open');
-    cy.elements().removeClass('faded');
     document.querySelectorAll('.node-card.selected').forEach((el) => el.classList.remove('selected'));
     document.querySelectorAll('.node-card.faded').forEach((el) => el.classList.remove('faded'));
   }
 
   panelClose.addEventListener('click', closePanel);
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closePanel();
-  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePanel(); });
 
   function selectNode(n) {
     document.querySelectorAll('.node-card.selected').forEach((el) => el.classList.remove('selected'));
@@ -265,12 +273,9 @@
   }
 
   cy.on('tap', 'node.person', (evt) => selectNode(evt.target));
+  cy.on('tap', (evt) => { if (evt.target === cy) closePanel(); });
 
-  cy.on('tap', (evt) => {
-    if (evt.target === cy) closePanel();
-  });
-
-  // ————— Контролы: зум, fit, ко мне —————
+  // ————— Зум и фокус —————
 
   document.getElementById('zoom-in').addEventListener('click', () => {
     cy.animate({ zoom: Math.min(cy.maxZoom(), cy.zoom() * 1.25), duration: 160 });
@@ -279,7 +284,7 @@
     cy.animate({ zoom: Math.max(cy.minZoom(), cy.zoom() / 1.25), duration: 160 });
   });
   document.getElementById('zoom-fit').addEventListener('click', () => {
-    cy.animate({ fit: { padding: 60 }, duration: 400 });
+    cy.animate({ fit: { padding: 80 }, duration: 400 });
   });
   document.getElementById('focus-me').addEventListener('click', () => {
     const me = cy.$('#vladlena');
@@ -306,6 +311,7 @@
         (d.fullName || '').toLowerCase().includes(q) ||
         (d.profession || '').toLowerCase().includes(q) ||
         (d.place || '').toLowerCase().includes(q) ||
+        (d.era || '').toLowerCase().includes(q) ||
         (d.notes || '').toLowerCase().includes(q)
       );
     });
@@ -315,10 +321,7 @@
     document.querySelectorAll('.node-card').forEach((el) => el.classList.add('faded'));
     matches.forEach((n) => {
       const card = document.querySelector(`.node-card[data-id="${n.id()}"]`);
-      if (card) {
-        card.classList.remove('faded');
-        card.classList.add('selected');
-      }
+      if (card) { card.classList.remove('faded'); card.classList.add('selected'); }
     });
     cy.animate({ fit: { eles: matches, padding: 100 }, duration: 450 });
   });
@@ -336,7 +339,7 @@
     btn.className = 'legend-item';
     btn.dataset.line = key;
     btn.innerHTML = `
-      <span class="dot" style="background:${info.color}; color:${info.color}"></span>
+      <span class="dot" style="background:${info.color}"></span>
       <span>${info.label}</span>
       <span class="count">${lineCounts[key]}</span>
     `;
@@ -366,7 +369,7 @@
     });
     cy.nodes('.union').forEach((u) => {
       const connected = u.connectedEdges().sources().union(u.connectedEdges().targets()).not(u);
-      const allHidden = connected.every((n) => n.style('display') === 'none');
+      const allHidden = connected.length > 0 && connected.every((n) => n.style('display') === 'none');
       u.style('display', allHidden ? 'none' : 'element');
     });
   }
