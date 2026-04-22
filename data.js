@@ -87,7 +87,7 @@ const people = [
     certain: true,
   },
 
-  // ————————————————— Бабушка и дедушка по папе —————————————————
+  // ————————————————— Бабушка по папе —————————————————
   {
     id: 'paternal-grandma',
     name: 'Бабушка по папе',
@@ -96,20 +96,7 @@ const people = [
     profession: '',
     place: 'Урал',
     era: 'ВОВ, послевоенный СССР',
-    notes: 'Бабушка Владлены по отцу — мама Коли Воробьёва. Жива в памяти: имя пока не зафиксировано в архиве (Владлена его знает).',
-    line: 'paternal-vorobyov',
-    gen: 2,
-    certain: true,
-  },
-  {
-    id: 'paternal-grandpa',
-    name: 'Дедушка по папе',
-    fullName: '?',
-    birth: '', death: '',
-    profession: '',
-    place: 'Урал',
-    era: 'ВОВ, послевоенный СССР',
-    notes: 'Дед Владлены по отцу — папа Коли Воробьёва. Имя забыто в момент записи.',
+    notes: 'Бабушка Владлены по отцу — мама Коли Воробьёва. Жена Николая Григорьевича. Имя пока не зафиксировано в архиве.',
     line: 'paternal-vorobyov',
     gen: 2,
     certain: true,
@@ -381,13 +368,13 @@ const people = [
   },
   {
     id: 'anna-f',
-    name: 'Анна Фёдорова',
-    fullName: 'Фёдорова Анна Васильевна',
+    name: 'Анна Бадюкова',
+    fullName: 'Бадюкова (Фёдорова) Анна Васильевна',
     birth: '', death: '',
     profession: '',
     place: '',
     era: 'ВОВ, послевоенный СССР',
-    notes: 'Одна из девяти детей Василия и Натальи.',
+    notes: 'Одна из девяти детей Василия и Натальи. В замужестве — Бадюкова (муж — Степан). Сын — Василий Бадюков, внук — Дмитрий Бадюков (живёт в Бремене).',
     line: 'maternal-fedorov',
     gen: 2,
     certain: true,
@@ -567,14 +554,57 @@ const people = [
     ],
   },
   {
-    id: 'eva-samuseva',
-    name: 'Ева Самусёва',
-    fullName: 'Самусёва Ева Васильевна',
+    id: 'eva-badyukova',
+    name: 'Ева Бадюкова',
+    fullName: 'Бадюкова Ева',
     birth: '', death: '',
-    profession: '', place: 'Люшев',
-    era: 'империя, революция, оккупация',
-    notes: 'Сестра Натальи. Имя Ева — католическое, типичное для польско-шляхетской традиции Люшева. Родная или сводная — ещё под вопросом.',
-    line: 'maternal-samusev', gen: 3, certain: false,
+    profession: '', place: '',
+    era: 'ВОВ, послевоенный СССР',
+    notes: 'Сестра Степана Бадюкова — мужа Анны Фёдоровой. В древо Владлены входит не по крови, а через брак двоюродной бабушки. Ранее в архиве ошибочно значилась как сестра Натальи Самусёвой.',
+    line: 'bridge', gen: 2, certain: true,
+  },
+  {
+    id: 'stepan-badyukov',
+    name: 'Степан Бадюков',
+    fullName: 'Бадюков Степан',
+    birth: '', death: '',
+    profession: '',
+    place: '',
+    era: 'ВОВ, послевоенный СССР',
+    notes: 'Муж Анны Фёдоровой. От него — фамилия Бадюковых в этой ветке. Брат Евы.',
+    line: 'bridge', gen: 2, certain: true,
+  },
+  {
+    id: 'vasiliy-badyukov',
+    name: 'Василий Бадюков',
+    fullName: 'Бадюков Василий Степанович',
+    birth: '', death: '',
+    profession: '',
+    place: '',
+    era: 'послевоенный СССР, новая Россия',
+    notes: 'Сын Анны Фёдоровой и Степана Бадюкова. Двоюродный дядя Владлены.',
+    line: 'maternal-fedorov', gen: 1, certain: true,
+  },
+  {
+    id: 'badyukov-parent',
+    name: 'Родитель Бадюковых',
+    fullName: '?',
+    birth: '', death: '',
+    profession: '', place: '',
+    era: 'Российская империя, революция',
+    notes: 'Родитель Степана и Евы Бадюковых. Имя неизвестно.',
+    line: 'bridge', gen: 3, certain: false,
+  },
+  {
+    id: 'dmitry-badyukov',
+    name: 'Дмитрий Бадюков',
+    fullName: 'Бадюков Дмитрий Васильевич',
+    birth: '', death: '',
+    profession: '',
+    place: 'Бремен, Германия',
+    era: 'новая Россия, 21 век',
+    notes: 'Сын Василия Бадюкова. Троюродный брат Владлены. Сейчас живёт в Бремене.',
+    line: 'maternal-fedorov', gen: 0, certain: true,
   },
   {
     id: 'curly-sister',
@@ -620,7 +650,7 @@ const people = [
     line: 'maternal-samusev', gen: 3, certain: true,
   },
 
-  // ————————————————— ВОРОБЬЁВЫ · деревенская ветка (возможные предки отца) —————————————————
+  // ————————————————— ВОРОБЬЁВЫ · уральская ветка —————————————————
   {
     id: 'grigory-vorobyov',
     name: 'Григорий Воробьёв',
@@ -629,8 +659,8 @@ const people = [
     profession: '',
     place: 'Багарякский р-н, Пьянковский с/с (Урал)',
     era: 'Российская империя, революция, коллективизация',
-    notes: 'Возможный прапрадед Владлены по отцу. Отец Ивана и Николая Воробьёвых из Багаряка. Семья раскулачена в 1929–1931. Точные данные — в ГУ ОГАЧО, Р-941, оп. 5, д. 41, л. 82. Связь с линией Коли Воробьёва пока не подтверждена.',
-    line: 'paternal-vorobyov', gen: 4, certain: false,
+    notes: 'Прапрадед Владлены по отцу. Отец Ивана и Николая Воробьёвых из Багаряка. Семья раскулачена в 1929–1931. Точные данные — в ГУ ОГАЧО, Р-941, оп. 5, д. 41, л. 82.',
+    line: 'paternal-vorobyov', gen: 4, certain: true,
   },
   {
     id: 'ivan-vorobyov',
@@ -640,8 +670,8 @@ const people = [
     profession: '',
     place: 'Багарякский р-н, Пьянковский с/с',
     era: 'империя, революция, коллективизация, ВОВ',
-    notes: 'Глава раскулаченной семьи Воробьёвых в Багаряке. Старший брат Николая. Возможный двоюродный прадед Владлены.',
-    line: 'paternal-vorobyov', gen: 3, certain: false,
+    notes: 'Двоюродный прадед Владлены. Глава раскулаченной семьи Воробьёвых в Багаряке. Старший брат Николая.',
+    line: 'paternal-vorobyov', gen: 3, certain: true,
   },
   {
     id: 'nikolay-vorobyov',
@@ -652,8 +682,8 @@ const people = [
     profession: '',
     place: 'Багарякский р-н, Пьянковский с/с (Урал)',
     era: 'империя, революция, коллективизация, ВОВ',
-    notes: 'На момент раскулачивания — 22 года, брат главы семьи. Возможный прадед Владлены — но связь с линией Коли пока не подтверждена. Архивное дело: ГУ ОГАЧО, Р-941, оп. 5, д. 41, л. 82.',
-    line: 'paternal-vorobyov', gen: 3, certain: false,
+    notes: 'Дед Владлены по отцу. На момент раскулачивания (1929–1931) — 22 года, брат главы семьи. Архивное дело: ГУ ОГАЧО, Р-941, оп. 5, д. 41, л. 82. В семейной памяти — «приехали из Куйбышева, был кулаком». Вся отцовская семья сейчас на Урале.',
+    line: 'paternal-vorobyov', gen: 3, certain: true,
   },
 ];
 
@@ -669,8 +699,8 @@ const marriages = [
   // Бабушка и дедушка по маме
   { id: 'u-valeriy-tamara',   spouses: ['valeriy', 'tamara'],      children: ['zhanna', 'oleg'], certain: true },
 
-  // Бабушка и дедушка по папе
-  { id: 'u-paternal',          spouses: ['paternal-grandpa', 'paternal-grandma'], children: ['papa-kolya'], certain: true },
+  // Бабушка и дедушка по папе — дед = Николай Григорьевич Воробьёв (раскулаченный из Багаряка)
+  { id: 'u-paternal',          spouses: ['nikolay-vorobyov', 'paternal-grandma'], children: ['papa-kolya'], certain: true },
 
   // Дядя Олег
   { id: 'u-oleg',              spouses: ['oleg', 'oleg-wife'],      children: ['matvey', 'timofey'], certain: true },
@@ -687,12 +717,21 @@ const marriages = [
   // Леонид и его дети
   { id: 'u-leonid',            spouses: ['leonid-f'], children: ['lyuba-f', 'tanya-f', 'igor-f', 'sveta-f'], certain: true },
 
+  // Анна Фёдорова и Степан Бадюков — ветка Бадюковых
+  { id: 'u-anna-stepan',       spouses: ['anna-f', 'stepan-badyukov'], children: ['vasiliy-badyukov'], certain: true },
+
+  // Степан и Ева — брат и сестра, через общих (неизвестных) родителей
+  { id: 'u-badyukov-parents',  spouses: ['badyukov-parent'], children: ['stepan-badyukov', 'eva-badyukova'], certain: false },
+
+  // Василий Бадюков — его сын Дмитрий
+  { id: 'u-vasiliy-badyukov',  spouses: ['vasiliy-badyukov'], children: ['dmitry-badyukov'], certain: true },
+
   // Иван-лётчик и Мария
   { id: 'u-ivan-maria',        spouses: ['ivan-samusev', 'maria-samuseva'], children: [], certain: true },
 
   // Родители Натальи — две жены отца Самусёва
   { id: 'u-samusev-1',         spouses: ['samusev-father', 'natalya-mother'],
-    children: ['natalya-samuseva', 'ivan-samusev', 'eva-samuseva', 'curly-sister'], certain: false },
+    children: ['natalya-samuseva', 'ivan-samusev', 'curly-sister'], certain: false },
   { id: 'u-samusev-2',         spouses: ['samusev-father', 'stepmother'],
     children: ['volodya-samusev', 'anya-samuseva', 'dunya-samuseva'], certain: false },
 
@@ -705,8 +744,8 @@ const marriages = [
   // Родители Матрёны Белановой
   { id: 'u-matryona-parents',  spouses: ['matryona-father', 'matryona-mother'], children: ['matryona'], certain: false },
 
-  // Воробьёвы Багарякские (гипотетическая связь с линией Коли)
-  { id: 'u-grigory-v',         spouses: ['grigory-vorobyov'], children: ['ivan-vorobyov', 'nikolay-vorobyov'], certain: false },
+  // Багарякские Воробьёвы: Григорий → Иван и Николай (дед Владлены)
+  { id: 'u-grigory-v',         spouses: ['grigory-vorobyov'], children: ['ivan-vorobyov', 'nikolay-vorobyov'], certain: true },
 ];
 
 // Справочник линий для легенды

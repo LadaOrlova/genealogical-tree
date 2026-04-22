@@ -4,6 +4,16 @@
 (function () {
   const { people, marriages, lineInfo } = window.__data;
 
+  const lineColorMap = {
+    'maternal-tkachev':  '#ff6b5c',
+    'maternal-fedorov':  '#86c46b',
+    'maternal-samusev':  '#4eb9eb',
+    'paternal-vorobyov': '#ff9240',
+    'orlov':             '#fcd93b',
+    'you':               '#8f6fb8',
+    'bridge':            '#c8c5be',
+  };
+
   // ————— Построение cytoscape-элементов —————
 
   const elements = [];
@@ -51,10 +61,12 @@
       });
     });
     m.children.forEach((ch) => {
-      if (!people.find((p) => p.id === ch)) return;
+      const childPerson = people.find((p) => p.id === ch);
+      if (!childPerson) return;
+      const childLineColor = lineColorMap[childPerson.line] || '#d4d1c8';
       elements.push({
         group: 'edges',
-        data: { id: `${m.id}->${ch}`, source: m.id, target: ch, etype: 'parent', certain: m.certain },
+        data: { id: `${m.id}->${ch}`, source: m.id, target: ch, etype: 'parent', certain: m.certain, lineColor: childLineColor },
         classes: `e-parent ${m.certain ? 'certain' : 'uncertain'}`,
       });
     });
@@ -62,8 +74,8 @@
 
   // ————— Стили cytoscape —————
 
-  const personWidth = 260;
-  const personHeight = 104;
+  const personWidth = 264;
+  const personHeight = 130;
 
   const style = [
     {
@@ -81,8 +93,8 @@
       selector: 'node.union',
       style: {
         'shape': 'ellipse',
-        'width': 4, 'height': 4,
-        'background-color': '#c4b89c',
+        'width': 6, 'height': 6,
+        'background-color': '#cac9c0',
         'border-width': 0,
       },
     },
@@ -91,19 +103,28 @@
       style: {
         'curve-style': 'taxi',
         'taxi-direction': 'downward',
-        'taxi-turn': 45,
-        'taxi-turn-min-distance': 18,
-        'width': 1.5,
-        'line-color': '#c4b89c',
+        'taxi-turn': 50,
+        'taxi-turn-min-distance': 20,
+        'width': 2,
+        'line-color': '#d4d1c8',
+        'line-cap': 'round',
         'target-arrow-shape': 'none',
+      },
+    },
+    {
+      selector: 'edge.e-parent',
+      style: {
+        'line-color': 'data(lineColor)',
+        'opacity': 0.72,
+        'width': 2.2,
       },
     },
     {
       selector: 'edge.e-marriage',
       style: {
         'curve-style': 'straight',
-        'line-color': '#c4b89c',
-        'width': 1.3,
+        'line-color': '#c8c5be',
+        'width': 1.5,
         'line-style': 'solid',
       },
     },
@@ -111,8 +132,9 @@
       selector: 'edge.uncertain',
       style: {
         'line-style': 'dashed',
-        'line-dash-pattern': [6, 6],
-        'line-color': '#d9d1bd',
+        'line-dash-pattern': [4, 6],
+        'line-color': '#c8c5be',
+        'opacity': 0.6,
       },
     },
   ];
@@ -167,23 +189,33 @@
     const name = escapeHtml(d.label);
     const dates = escapeHtml(d.dates);
     const prof = escapeHtml(d.profession);
+    const era = escapeHtml((d.era || '').split(',')[0].trim());
 
     return `
       <div class="${classes}" data-id="${d.id}">
-        <div class="line-bar"></div>
+        ${d.certain ? '' : '<span class="q">?</span>'}
         <div class="body">
           <div class="name">${name}</div>
           ${dates ? `<div class="dates">${dates}</div>` : ''}
           ${prof ? `<div class="profession">${prof}</div>` : ''}
+          ${era ? `<span class="era-pill">${era}</span>` : ''}
         </div>
       </div>
     `;
   }
 
   cy.ready(() => {
-    // Лёгкое начальное позиционирование: вписать всё + немного в сторону, чтобы сайдбар не перекрывал
     cy.fit(null, 80);
-    cy.panBy({ x: 140, y: 0 });
+    cy.panBy({ x: 160, y: 0 });
+
+    // Статистика в сайдбар
+    const statPeople = document.getElementById('stat-people');
+    const statLines = document.getElementById('stat-lines');
+    if (statPeople) statPeople.textContent = people.length;
+    if (statLines) {
+      const linesWithPeople = new Set(people.map((p) => p.line));
+      statLines.textContent = linesWithPeople.size;
+    }
   });
 
   // ————— Панель деталей —————
