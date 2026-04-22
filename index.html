@@ -7,7 +7,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fraunces:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -17,27 +17,30 @@
 
   <header class="topbar">
     <div class="brand">
-      <span class="eyebrow">Семейный архив</span>
-      <span class="title">Генеалогическое древо</span>
+      <span class="mark">В</span>
+      <div>
+        <div class="title">Генеалогическое древо</div>
+        <div class="subtitle">Ткачёвы · Белановы · Фёдоровы · Самусёвы · Воробьёвы · Орловы</div>
+      </div>
     </div>
 
     <div class="topbar-spacer"></div>
 
     <div class="search-box">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted)"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
-      <input id="search" placeholder="Найти по имени, профессии или месту" autocomplete="off" />
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--ink-faint)"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+      <input id="search" placeholder="Найти по имени, месту, профессии…" autocomplete="off" spellcheck="false" />
     </div>
 
-    <button id="focus-me" class="text-btn" title="К себе (Владлена)">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3"></path></svg>
-      К себе
+    <button id="focus-me" class="text-btn primary" title="Показать меня">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3"></path></svg>
+      Ко мне
     </button>
 
-    <div class="zoom-controls">
+    <div class="controls">
       <button id="zoom-out" class="icon-btn" title="Отдалить">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path></svg>
       </button>
-      <button id="zoom-fit" class="icon-btn" title="Вписать">
+      <button id="zoom-fit" class="icon-btn" title="Вписать всё древо">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"></path></svg>
       </button>
       <button id="zoom-in" class="icon-btn" title="Приблизить">
@@ -49,19 +52,34 @@
   <div class="stage">
 
     <aside class="sidebar">
-      <h3>Линии рода</h3>
-      <div class="legend" id="legend"></div>
-
-      <h3>Фильтр</h3>
-      <div class="filter-row">
-        <span>Только подтверждённое</span>
-        <label class="toggle" id="certain-toggle">
-          <input type="checkbox" id="certain-only" />
-        </label>
+      <div class="sidebar-section">
+        <blockquote class="quote">
+          «Мужчина — это случайно выживший мальчик.»
+          <div class="quote-attribution">— мама Жанна, о Василии Артёмовиче Фёдорове</div>
+        </blockquote>
       </div>
 
-      <div class="hint">
-        Клик по человеку — откроется карточка с деталями. Колесо мыши или щипок — зум. Пунктирная рамка — имя или связь под вопросом.
+      <div class="sidebar-section">
+        <h3>Линии рода</h3>
+        <div class="legend" id="legend"></div>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>Фильтр</h3>
+        <div class="filter-row">
+          <span>Только подтверждённое</span>
+          <div class="toggle" id="certain-toggle">
+            <input type="checkbox" id="certain-only" />
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>Как смотреть</h3>
+        <div class="hint">
+          Клик по карточке — детали. <kbd>⌘</kbd>/колесо — зум, перетаскивание — пан.
+          Пунктир = имя или связь под вопросом. <kbd>Esc</kbd> — закрыть карточку.
+        </div>
       </div>
     </aside>
 
@@ -81,16 +99,10 @@
 <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.30.0/dist/cytoscape.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dagre@0.8.5/dist/dagre.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/cytoscape-dagre@2.5.0/cytoscape-dagre.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/cytoscape-node-html-label@1.2.2/dist/cytoscape-node-html-label.min.js"></script>
 
 <script src="data.js"></script>
 <script src="app.js"></script>
-
-<script>
-  // Синхронизация визуального состояния toggle
-  const ct = document.getElementById('certain-only');
-  const wrap = document.getElementById('certain-toggle');
-  ct.addEventListener('change', () => wrap.classList.toggle('on', ct.checked));
-</script>
 
 </body>
 </html>
