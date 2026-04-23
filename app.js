@@ -208,14 +208,60 @@
     cy.fit(null, 80);
     cy.panBy({ x: 160, y: 0 });
 
-    // Статистика в сайдбар
-    const statPeople = document.getElementById('stat-people');
-    const statLines = document.getElementById('stat-lines');
-    if (statPeople) statPeople.textContent = people.length;
-    if (statLines) {
-      const linesWithPeople = new Set(people.map((p) => p.line));
-      statLines.textContent = linesWithPeople.size;
+    // ————— Статистика в сайдбар —————
+
+    const setText = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
+
+    // Людей
+    setText('stat-people', people.length);
+
+    // Линий
+    const linesWithPeople = new Set(people.map((p) => p.line));
+    setText('stat-lines', linesWithPeople.size);
+
+    // Глубина — самый ранний зафиксированный год рождения
+    const years = people
+      .map((p) => {
+        const m = String(p.birth || '').match(/\b(1[5-9]\d\d|20\d\d)\b/);
+        return m ? parseInt(m[1], 10) : null;
+      })
+      .filter((y) => y !== null);
+    if (years.length) {
+      const minYear = Math.min(...years);
+      const thisYear = new Date().getFullYear();
+      setText('stat-depth', minYear);
+      setText('stat-depth-sub', `~${thisYear - minYear} лет назад`);
+    } else {
+      setText('stat-depth', '—');
     }
+
+    // География: уникальные места и страны
+    const countryOf = (place) => {
+      const p = place.toLowerCase();
+      if (/бремен|германи/.test(p)) return 'Германия';
+      if (/белор|гомель|минск|струк|гавл|люшев|липинич|лепинк|буда-кошел|потапов/.test(p)) return 'Беларусь';
+      if (/ленинград|петерб/.test(p)) return 'Россия'; // Ленинградский фронт — РСФСР/Россия
+      if (/калинингр/.test(p)) return 'Россия';
+      if (/снежинск|полевск|урал|багаряк|пьянков|свердлов|челябинск|екатеринбург|куйбышев/.test(p)) return 'Россия';
+      if (/фронт|окаэ|сп |сд /.test(p)) return null;
+      return 'Россия';
+    };
+
+    const places = new Set();
+    const countries = new Set();
+    people.forEach((p) => {
+      if (!p.place) return;
+      p.place.split(/[,;]|\s·\s/).forEach((raw) => {
+        const cleaned = raw.replace(/\([^)]*\)/g, '').trim();
+        if (cleaned && cleaned.length > 1) {
+          places.add(cleaned);
+          const c = countryOf(cleaned);
+          if (c) countries.add(c);
+        }
+      });
+    });
+    setText('stat-places', places.size);
+    setText('stat-places-sub', countries.size === 1 ? countries.values().next().value : `${countries.size} страны`);
   });
 
   // ————— Панель деталей —————
