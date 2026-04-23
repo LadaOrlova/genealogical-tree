@@ -207,32 +207,31 @@
   cy.ready(() => {
     cy.fit(null, 80);
     cy.panBy({ x: 160, y: 0 });
+  });
 
-    // ————— Статистика в сайдбар —————
+  // ————— Статистика в сайдбар (считаем сразу, не ждём cytoscape) —————
 
+  computeStats();
+
+  function computeStats() {
     const setText = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
 
-    // Людей
     setText('stat-people', people.length);
 
-    // Линий
     const linesWithPeople = new Set(people.map((p) => p.line));
     setText('stat-lines', linesWithPeople.size);
 
-    // Глубина — самый ранний зафиксированный год рождения
-    const years = people
-      .map((p) => {
-        const m = String(p.birth || '').match(/\b(1[5-9]\d\d|20\d\d)\b/);
-        return m ? parseInt(m[1], 10) : null;
-      })
-      .filter((y) => y !== null);
+    // Глубина: самый ранний зафиксированный год рождения
+    const years = [];
+    people.forEach((p) => {
+      const match = String(p.birth || '').match(/(1[5-9]\d{2}|20\d{2})/);
+      if (match) years.push(parseInt(match[1], 10));
+    });
     if (years.length) {
-      const minYear = Math.min(...years);
+      const minYear = Math.min.apply(null, years);
       const thisYear = new Date().getFullYear();
-      setText('stat-depth', minYear);
-      setText('stat-depth-sub', `~${thisYear - minYear} лет назад`);
-    } else {
-      setText('stat-depth', '—');
+      setText('stat-depth', String(minYear));
+      setText('stat-depth-sub', '~' + (thisYear - minYear) + ' лет назад');
     }
 
     // География: уникальные места и страны
@@ -240,11 +239,9 @@
       const p = place.toLowerCase();
       if (/бремен|германи/.test(p)) return 'Германия';
       if (/белор|гомель|минск|струк|гавл|люшев|липинич|лепинк|буда-кошел|потапов/.test(p)) return 'Беларусь';
-      if (/ленинград|петерб/.test(p)) return 'Россия'; // Ленинградский фронт — РСФСР/Россия
-      if (/калинингр/.test(p)) return 'Россия';
-      if (/снежинск|полевск|урал|багаряк|пьянков|свердлов|челябинск|екатеринбург|куйбышев/.test(p)) return 'Россия';
-      if (/фронт|окаэ|сп |сд /.test(p)) return null;
-      return 'Россия';
+      if (/ленинград|петерб|калинингр|снежинск|полевск|урал|багаряк|пьянков|свердлов|челябинск|екатеринбург|куйбышев|россия/.test(p)) return 'Россия';
+      if (/фронт|окаэ|\bсп\b|\bсд\b|\bва\b/.test(p)) return null;
+      return null;
     };
 
     const places = new Set();
@@ -260,9 +257,12 @@
         }
       });
     });
-    setText('stat-places', places.size);
-    setText('stat-places-sub', countries.size === 1 ? countries.values().next().value : `${countries.size} страны`);
-  });
+    setText('stat-places', String(places.size));
+    let sub = '';
+    if (countries.size === 1) sub = countries.values().next().value;
+    else if (countries.size > 1) sub = countries.size + ' страны';
+    setText('stat-places-sub', sub);
+  }
 
   // ————— Панель деталей —————
 
