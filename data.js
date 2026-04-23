@@ -413,7 +413,7 @@ const people = [
     profession: 'строитель',
     place: '',
     era: 'ВОВ, послевоенный СССР',
-    notes: 'Один из девяти детей Василия и Натальи. Не путать с Володей Самусёвым-лётчиком (сводным братом Натальи).',
+    notes: 'Один из девяти детей Василия и Натальи.',
     line: 'maternal-fedorov',
     gen: 2,
     certain: true,
@@ -518,7 +518,7 @@ const people = [
     birth: '', death: '',
     profession: '', place: 'Люшев',
     era: 'Российская империя, революция',
-    notes: 'Прапрадед Владлены по ветке Самусёвых. Имя не зафиксировано чётко. У Самусёвых в Люшеве было хорошее хозяйство и пасека. Первая жена умерла в родах. От второй жены — ещё трое детей (Аня, Дуня, Володя).',
+    notes: 'Прапрадед Владлены по ветке Самусёвых. Имя не зафиксировано чётко. У Самусёвых в Люшеве было хорошее хозяйство и пасека. Первая жена умерла в родах. От второй жены — ещё две дочери (Аня и Дуня).',
     line: 'maternal-samusev', gen: 4, certain: false,
   },
   {
@@ -643,18 +643,7 @@ const people = [
     line: 'maternal-samusev', gen: 3, certain: false,
   },
 
-  // ————————————————— Сводные братья и сёстры Натальи (от мачехи) —————————————————
-  {
-    id: 'volodya-samusev',
-    name: 'Владимир Самусёв',
-    fullName: 'Самусёв Владимир Васильевич',
-    birth: '', death: '',
-    profession: 'лётчик',
-    place: 'предположительно Свердловск / Екатеринбург',
-    era: 'ВОВ, послевоенный СССР',
-    notes: 'Сводный брат Натальи по отцу (от мачехи). Лётчик. Мама сначала называла именно Владимира — в Екатеринбурге. Потом выяснилось, что лётчиков в семье было двое: родной Иван и сводный Володя.',
-    line: 'maternal-samusev', gen: 3, certain: false,
-  },
+  // ————————————————— Сводные сёстры Натальи (от мачехи) —————————————————
   {
     id: 'anya-samuseva',
     name: 'Аня Самусёва',
@@ -765,7 +754,7 @@ const marriages = [
   { id: 'u-samusev-1',         spouses: ['samusev-father', 'natalya-mother'],
     children: ['natalya-samuseva', 'ivan-samusev', 'curly-sister'], certain: false },
   { id: 'u-samusev-2',         spouses: ['samusev-father', 'stepmother'],
-    children: ['volodya-samusev', 'anya-samuseva', 'dunya-samuseva'], certain: false },
+    children: ['anya-samuseva', 'dunya-samuseva'], certain: false },
 
   // Отец Артёма
   { id: 'u-artem',             spouses: ['artem-fedorov'], children: ['vasiliy-fedorov', 'efim-fedorov'], certain: true },
