@@ -205,9 +205,60 @@
   }
 
   cy.ready(() => {
+    forcePaternalLeft();
     cy.fit(null, 80);
     cy.panBy({ x: 160, y: 0 });
   });
+
+  // После dagre-раскладки принудительно сдвигаем всю отцовскую ветку влево —
+  // чтобы Воробьёвы (и Жевлаковы) выстроились в один левый столбец,
+  // а маминина сторона жила справа.
+  function forcePaternalLeft() {
+    const paternal = cy.nodes('.person.line-paternal-vorobyov');
+    if (!paternal.length) return;
+
+    // Находим самую левую X среди НЕпапиных персон на каждое поколение,
+    // и общее левое значение.
+    let overallLeft = Infinity;
+    cy.nodes('.person').forEach((n) => {
+      if (n.hasClass('line-paternal-vorobyov')) return;
+      overallLeft = Math.min(overallLeft, n.position('x'));
+    });
+    if (overallLeft === Infinity) return;
+
+    // Группируем папиных по поколению
+    const byGen = {};
+    paternal.forEach((n) => {
+      const gen = n.data('gen') || 0;
+      (byGen[gen] = byGen[gen] || []).push(n);
+    });
+
+    // Ставим папиных левее overallLeft, колонкой. В каждом поколении
+    // раскладываем несколько человек по горизонтали близко друг к другу.
+    const colWidth = 290;
+    const gap = 120; // отступ между мамой-древом и папой-древом
+    Object.keys(byGen).forEach((gen) => {
+      const list = byGen[gen];
+      // Сортировка внутри поколения — по id, чтобы стабильно
+      list.sort((a, b) => a.id().localeCompare(b.id()));
+      list.forEach((n, i) => {
+        const x = overallLeft - gap - colWidth * (list.length - i);
+        const y = n.position('y');
+        n.position({ x, y });
+      });
+    });
+
+    // Обновим позиции union-узлов (они должны сидеть между супругами)
+    cy.nodes('.union').forEach((u) => {
+      const spouses = u.connectedEdges('.e-marriage').sources().filter('.person');
+      if (spouses.length === 1) {
+        u.position({ x: spouses[0].position('x'), y: u.position('y') });
+      } else if (spouses.length >= 2) {
+        const avgX = spouses.reduce((acc, s) => acc + s.position('x'), 0) / spouses.length;
+        u.position({ x: avgX, y: u.position('y') });
+      }
+    });
+  }
 
   // ————— Статистика в сайдбар (считаем сразу, не ждём cytoscape) —————
 
